@@ -67,13 +67,13 @@ class WebpackSvgStore implements IWebpackSvgStore {
         })();
   }
 
-  minify(file: string, removeViewBox: boolean, filename: string) {
+  minify(file: string, removeViewBox: boolean, idsPrefix: string) {
     const plugins: Plugin[] = [
       { name: "removeTitle" },
       { name: "collapseGroups" },
       { name: "inlineStyles" },
       { name: "convertStyleToAttrs" },
-      { name: "prefixIds", params: {prefix: this.convertFilenameToId(filename, '')} },
+      { name: "prefixIds", params: {prefix: idsPrefix} },
     ];
 
     if (removeViewBox) {
@@ -108,12 +108,12 @@ class WebpackSvgStore implements IWebpackSvgStore {
     const $combinedSvg = $("svg");
     const $combinedDefs = $("defs");
 
-    files.forEach((file) => {
+    files.forEach((file, index) => {
       // load and minify
       const buffer = this.minify(
         fs.readFileSync(file, "utf8"),
         options.removeViewBox,
-        file
+        index.toString()
       );
 
       // get filename for id generation
@@ -145,6 +145,8 @@ class WebpackSvgStore implements IWebpackSvgStore {
       $symbol.append($svg.contents());
       $combinedSvg.append($symbol);
     });
+
+    //TODO optimise IDs in generated output
 
     return $.xml();
   }
