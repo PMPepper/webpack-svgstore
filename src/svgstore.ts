@@ -67,13 +67,13 @@ class WebpackSvgStore implements IWebpackSvgStore {
         })();
   }
 
-  minify(file: string, removeViewBox: boolean) {
+  minify(file: string, removeViewBox: boolean, filename: string) {
     const plugins: Plugin[] = [
       { name: "removeTitle" },
       { name: "collapseGroups" },
       { name: "inlineStyles" },
       { name: "convertStyleToAttrs" },
-      { name: "cleanupIDs" },
+      { name: "prefixIds", params: {prefix: this.convertFilenameToId(filename, '')} },
     ];
 
     if (removeViewBox) {
@@ -112,7 +112,8 @@ class WebpackSvgStore implements IWebpackSvgStore {
       // load and minify
       const buffer = this.minify(
         fs.readFileSync(file, "utf8"),
-        options.removeViewBox
+        options.removeViewBox,
+        file
       );
 
       // get filename for id generation

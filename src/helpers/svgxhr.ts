@@ -29,7 +29,8 @@ const svgXHR = (filename: string) => {
     }
     const div = document.createElement("div");
     div.innerHTML = _ajax.responseText;
-    div.style.display = "none";
+    div.style.visibility = "hidden";
+    div.style.height = '0';
 
     domready(() => {
       document.body.insertBefore(div, document.body.childNodes[0]);
